@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JEE Prep Tracker Pro</title>
     
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 
+    <!-- Firebase SDKs (Auth, Firestore, AND Storage) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 
+    <!-- AUTHENTICATION SCREEN -->
     <div id="auth-screen">
         <div class="auth-card">
             <h2 style="margin-bottom: 20px; text-align: center;">JEE Tracker Login</h2>
@@ -26,6 +31,7 @@
         </div>
     </div>
 
+    <!-- MAIN DASHBOARD -->
     <div id="dashboard" class="hidden container">
         <header>
             <div>
@@ -41,6 +47,7 @@
         </header>
 
         <div class="grid">
+            <!-- Left Column: Tasks -->
             <div>
                 <div class="card" id="student-controls">
                     <h3>Set Targets (Plan before 00:01)</h3>
@@ -53,8 +60,7 @@
 
                 <div class="card">
                     <h3 style="margin-bottom: 16px;">Timeline & Tasks</h3>
-                    <div id="task-list">
-                        </div>
+                    <div id="task-list"></div>
                 </div>
                 
                 <div class="card">
@@ -64,6 +70,7 @@
                 </div>
             </div>
 
+            <!-- Right Column: Uploads & Mentor Feedback -->
             <div>
                 <div class="card">
                     <h3>Daily Proof</h3>
@@ -90,7 +97,7 @@
         </div>
     </div>
 
+    <!-- Custom Logic -->
     <script src="app.js"></script>
 </body>
 </html>
-
