@@ -1,23 +1,24 @@
 // ==========================================
-// 1. CONFIGURATION (PASTE YOUR KEYS HERE)
+// 1. FIREBASE CONFIGURATION
 // ==========================================
-
- const firebaseConfig = {
-  apiKey: "AIzaSyBjyOOL1Y9qGzql_FWvYfjxGx1FukoUH0I",
-  authDomain: "kvs-memories.firebaseapp.com",
-  databaseURL: "https://kvs-memories-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "kvs-memories",
-  storageBucket: "kvs-memories.firebasestorage.app",
-  messagingSenderId: "62349854159",
-  appId: "1:62349854159:web:0d26b214c54dcf00c5beba",
-  measurementId: "G-WB76L4JGET"
+const firebaseConfig = {
+    apiKey: "AIzaSyBjyOOL1Y9qGzql_FWvYfjxGx1FukoUH0I",
+    authDomain: "kvs-memories.firebaseapp.com",
+    databaseURL: "https://kvs-memories-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "kvs-memories",
+    storageBucket: "kvs-memories.firebasestorage.app",
+    messagingSenderId: "62349854159",
+    appId: "1:62349854159:web:0d26b214c54dcf00c5beba",
+    measurementId: "G-WB76L4JGET"
 };
+
+// Initialize Firebase App
 firebase.initializeApp(firebaseConfig);
+
+// Initialize Services
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-const CLOUD_NAME = 'YOUR_CLOUD_NAME'; 
-const UPLOAD_PRESET = 'YOUR_UNSIGNED_PRESET'; 
+const storage = firebase.storage(); // Added Firebase Storage
 
 // GLOBALS
 const STUDENT_EMAIL = "shaurya.vidyora@gmail.com";
@@ -160,7 +161,7 @@ async function saveMentorFeedback() {
 }
 
 // ==========================================
-// 4. IMAGE UPLOAD & RENDERING
+// 4. FIREBASE STORAGE IMAGE UPLOAD
 // ==========================================
 async function handleUpload(e) {
     const file = e.target.files[0];
@@ -170,17 +171,28 @@ async function handleUpload(e) {
     textEl.innerText = "Compressing...";
     
     try {
+        // Compress the image before uploading to save Firebase Storage space
         const compressedBlob = await compressImage(file, 800, 0.7);
-        textEl.innerText = "Uploading...";
-        const imgUrl = await uploadToCloudinary(compressedBlob, file.name);
+        textEl.innerText = "Uploading to Firebase...";
         
         const dateVal = document.getElementById('date-picker').value;
+        const fileName = `daily_proofs/${dateVal}_${Date.now()}.jpg`;
+        
+        // Upload to Firebase Storage
+        const storageRef = storage.ref().child(fileName);
+        await storageRef.put(compressedBlob);
+        
+        // Get the downloadable URL
+        const imgUrl = await storageRef.getDownloadURL();
+        
+        // Save the URL to Firestore database
         await db.collection('dailyLogs').doc(dateVal).set({ imageUrl: imgUrl }, { merge: true });
         
         textEl.innerText = "Uploaded successfully!";
         setTimeout(() => { textEl.innerText = "Click to upload image"; }, 2000);
     } catch(err) {
-        alert("Upload failed: " + err.message);
+        console.error(err);
+        alert("Upload failed: Check Firebase Storage Rules. " + err.message);
         textEl.innerText = "Upload Failed";
     }
 }
@@ -209,17 +221,9 @@ function compressImage(file, maxWidth, quality) {
     });
 }
 
-async function uploadToCloudinary(blob, name) {
-    const formData = new FormData();
-    formData.append('file', blob, name);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-        method: 'POST', body: formData
-    });
-    const data = await res.json();
-    return data.secure_url;
-}
-
+// ==========================================
+// 5. RENDER FUNCTIONS
+// ==========================================
 function renderTasks(tasks) {
     const container = document.getElementById('task-list');
     container.innerHTML = '';
@@ -270,4 +274,3 @@ function renderMentorFeedback(text) {
     display.innerText = text || "No mentor feedback yet.";
     display.classList.remove('hidden');
 }
-
