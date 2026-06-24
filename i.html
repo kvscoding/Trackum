@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JEE Prep Tracker Pro</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h2 style="margin-bottom: 20px; text-align: center;">JEE Tracker Login</h2>
+            <input type="email" id="email" placeholder="Email (shaurya.vidyora@gmail.com for student)">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn btn-primary" style="width: 100%;" onclick="login()">Login</button>
+            <p id="auth-error" style="color: var(--danger); margin-top: 10px; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden container">
+        <header>
+            <div>
+                <h1 style="font-size: 1.5rem; display: flex; align-items: center; gap: 8px;">
+                    <i class="ri-rocket-2-fill" style="color: var(--primary);"></i> JEE Target Board
+                </h1>
+                <p id="user-role-display" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+            </div>
+            <div class="flex items-center" style="gap: 12px;">
+                <input type="date" id="date-picker" style="margin: 0; width: auto;" onchange="loadDateData()">
+                <button class="btn btn-outline" onclick="logout()"><i class="ri-logout-box-r-line"></i></button>
+            </div>
+        </header>
+
+        <div class="grid">
+            <div>
+                <div class="card" id="student-controls">
+                    <h3>Set Targets (Plan before 00:01)</h3>
+                    <div style="display: flex; gap: 8px; margin-top: 12px;">
+                        <input type="time" id="task-time" style="width: 120px;">
+                        <input type="text" id="task-desc" placeholder="Task description (e.g., Physics Rotational Motion PYQs)">
+                        <button class="btn btn-primary" onclick="addTask()"><i class="ri-add-line"></i></button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;">Timeline & Tasks</h3>
+                    <div id="task-list">
+                        </div>
+                </div>
+                
+                <div class="card">
+                     <h3 style="margin-bottom: 16px;">Syllabus & Stats Logs</h3>
+                     <textarea id="stats-input" placeholder="Chapters completed today, Mock scores, PYQs done..." rows="3"></textarea>
+                     <button class="btn btn-outline" id="save-stats-btn" onclick="saveStats()" style="width: 100%;">Save Log</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h3>Daily Proof</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Upload screentime or setup pic</p>
+                    
+                    <div class="upload-area" id="upload-box" onclick="document.getElementById('file-input').click()">
+                        <i class="ri-upload-cloud-2-line" style="font-size: 24px;"></i>
+                        <p id="upload-text">Click to upload image</p>
+                    </div>
+                    <input type="file" id="file-input" class="hidden" accept="image/*" onchange="handleUpload(event)">
+                    
+                    <img id="daily-image" class="img-preview hidden">
+                </div>
+
+                <div class="card">
+                    <h3>Mentor Feedback</h3>
+                    <div id="mentor-display" class="comment-box hidden"></div>
+                    <div id="mentor-controls" class="hidden" style="margin-top: 12px;">
+                        <textarea id="mentor-input" placeholder="Leave feedback for the student..." rows="3"></textarea>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="saveMentorFeedback()">Submit Feedback</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
